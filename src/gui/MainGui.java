@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -8,7 +7,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 
 import util.GuiComponentFactory;
 
@@ -33,7 +34,7 @@ public class MainGui
 	 * constructor
 	 */
 	public MainGui() {
-		mainFrame = new JFrame("CTPR Score Tracker"); {
+		mainFrame = new JFrame("CSSB Basic Template Generator"); {
 			
 			JPanel wrapper = new JPanel();
 			wrapper.setBorder(GuiComponentFactory.insideLineBorder);
@@ -68,40 +69,65 @@ public class MainGui
 	private JPanel buildMainPanel() {
 		JPanel ans = new JPanel();
 		ans.setLayout(new BoxLayout(ans, BoxLayout.Y_AXIS)); {
-			
-			// Textfields
-			JPanel textFieldPanel = new JPanel();
-			textFieldPanel.setLayout(new BoxLayout(textFieldPanel, BoxLayout.Y_AXIS)); {
-				
-				// Input field
-				JPanel namePanel = new JPanel();
-				namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.X_AXIS)); {
-					inputArea = new JTextArea(20, 30);
-					namePanel.add(inputArea);
+
+			inputArea = new JTextArea(20, 30);
+			inputArea.setLineWrap(true);
+			inputArea.setWrapStyleWord(true);
+			ans.add(inputArea);
+	
+			convertButton = new JButton("Generate CSS Template");
+			convertButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					outputArea.setText(generateOutputCss(inputArea.getText()));
 				}
-				textFieldPanel.add(namePanel);
-
-				// Convert button
-				convertButton = new JButton("Calculate Scores");
-				convertButton.setPreferredSize(new Dimension(80, 40));
-				convertButton.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-
-					}
-				});
-				textFieldPanel.add(convertButton);				
-
-				// Output field
-				JPanel urlPanel = new JPanel();
-				urlPanel.setLayout(new BoxLayout(urlPanel, BoxLayout.X_AXIS)); {
-					outputArea = new JTextArea(20, 30);
-					urlPanel.add(outputArea);
-				}
-				textFieldPanel.add(urlPanel);
-			}
-			ans.add(textFieldPanel);			
+			});
+			ans.add(convertButton);				
+	
+			outputArea = new JTextArea(20, 30);
+			outputArea.setLineWrap(true);
+			outputArea.setWrapStyleWord(true);
+			JScrollPane outputScrollPane = new JScrollPane(outputArea);
+			outputScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+			outputScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+			ans.add(outputScrollPane);		
 		}
+		return ans;
+	}
+	
+	private String generateOutputCss(String input) {
+		String ans = "";
+		
+		String[] elements = input.split(", ");
+		
+		// HTML elements
+		for(int i=0;i<elements.length;++i) {
+			ans += "<p " + elements[i] + "></p>";
+		}
+		ans += "\n";
+		
+		// Initial text
+		ans += "<style>\n";
+		ans += "  * {\n";
+		ans += "    margin: 0;\n";
+		ans += "    position: fixed;\n";
+		ans += "    background: ;\n";
+		ans += "  }\n";
+
+		// Elements descriptors
+		for(int i=0;i<elements.length;++i) {
+			ans += "  [" + elements[i] + "] {\n";
+			ans += "    margin: ;\n";
+			ans += "    height: ;\n";
+			ans += "    width: ;\n";
+			ans += "    background: ;\n";
+			ans += "    /* outline: ; */\n";
+			ans += "    /* border-radius: ; */\n";
+			ans += "    /* box-shadow: ; */\n";
+			ans += "  }\n";
+		}		
+		ans += "</style>";
+		
 		return ans;
 	}
 	
