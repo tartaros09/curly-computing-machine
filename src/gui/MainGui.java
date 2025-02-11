@@ -2,6 +2,9 @@ package gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -95,14 +98,36 @@ public class MainGui
 		return ans;
 	}
 	
-	private String generateOutputCss(String input) {
+	// face, mouth, lEye/rEye, nose, lEar/rEar/cEar
+	private static String generateOutputCss(String input) {
 		String ans = "";
 		
-		String[] elements = input.split(", ");
+		String allNamesString = input.replace("/", ", ");
+		List<String> allNames = Arrays.asList(allNamesString.split(", "));
 		
+		List<String> groupedNames = Arrays.asList(input.split(", "));
+		
+		List<String> finalTokens = new ArrayList<String>();
+		for(int i=0;i<groupedNames.size();++i) {
+			List<String> tmp = Arrays.asList(groupedNames.get(i).split("/"));
+			System.out.println(tmp);
+			if(tmp.size() == 1) {
+				finalTokens.add("[" + tmp.get(0) + "]");
+			} else {
+				for(int j=0;j<tmp.size();++j) {
+					String currentToken = "";
+					for(int k=j;k<tmp.size();++k) {
+						currentToken += "[" + tmp.get(k) + "], ";
+					}
+					finalTokens.add(currentToken.substring(0, currentToken.length()-2));
+				}
+			}
+		}
+		System.out.println(finalTokens);
+				
 		// HTML elements
-		for(int i=0;i<elements.length;++i) {
-			ans += "<p " + elements[i] + "></p>";
+		for(int i=0;i<allNames.size();++i) {
+			ans += "<p " + allNames.get(i) + "></p>";
 		}
 		ans += "\n";
 		
@@ -113,10 +138,10 @@ public class MainGui
 		ans += "    position: fixed;\n";
 		ans += "    background: ;\n";
 		ans += "  }\n";
-
+		
 		// Elements descriptors
-		for(int i=0;i<elements.length;++i) {
-			ans += "  [" + elements[i] + "] {\n";
+		for(int i=0;i<finalTokens.size();++i) {
+			ans += "    " + finalTokens.get(i) + " {\n";
 			ans += "    margin: ;\n";
 			ans += "    height: ;\n";
 			ans += "    width: ;\n";
